@@ -11,15 +11,17 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-
 /*常量定义*/
 typedef int status;
+extern int ltr_num;   //全部文字数
+extern int cls_num;   //全部子句数
+extern int ltr_known; //已知文字数
 //变量相关
-#define TRUE 1         //变量为真
-#define FALSE -1       //变量为假
-#define UNKNOWN 0      //变量未赋值
-#define NONE 2         //变量不存在
-#define MaxNumVar 4000 //最大变量数
+#define TRUE 1           //变量为真
+#define FALSE -1         //变量为假
+#define UNKNOWN 0        //变量未赋值
+#define NONE 2           //变量不存在
+#define Max_Ltr_Num 4000 //最大文字数
 //范式相关
 #define SATISFIABLE 1   //可满足
 #define UNSATISFIABLE 0 //不可满足
@@ -38,7 +40,7 @@ typedef struct literalNode
 typedef struct clauseNode
 {
     LiteralNode *p;                     //指向子句的文字链
-    struct clauseNode *next_caluseNode; //邻接表中无意义，读取文件中使用
+    struct clauseNode *next_caluseNode; //指向下一个子句结点
 } ClauseNode;
 
 //子句链表定义
@@ -58,11 +60,15 @@ typedef struct literalList
 //答案结构定义
 typedef struct answer
 {
-    int branchLevel[MaxNumVar + 1];  //赋值时的决策树高度
-    int value[MaxNumVar + 1];        //TRUE or FALSE or UNKNOWN or NONE
-    int searched[MaxNumVar + 1];     //已被搜索的情况数
-    int singleClause[MaxNumVar + 1]; //标记是否存在该变量的单子句
-}Answer;
-/*函数声明*/
+    int *branchLevel; //赋值时的决策树高度
+    int *value;       //TRUE or FALSE or UNKNOWN or NONE
+    int *searched;    //已被搜索的情况数
+    int *unitClause;  //标记是否存在该变量的单子句
+} Answer;
 
+/*函数声明*/
+//cnf.c中相关函数声明
+status InitCnf(ClauseList **G, Answer **ans, LiteralList literals[]);
+status AddClause(ClauseNode *ctemp, int var, LiteralList literals[]);
+status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *filename);
 #endif
