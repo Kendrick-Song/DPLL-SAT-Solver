@@ -3,7 +3,6 @@
  * 文件描述：CNF相关操作函数定义
 **/
 #include "head.h"
-
 /**
  * 函数名称：InitCnf
  * 函数功能：初始化cnf相关结构
@@ -32,13 +31,8 @@ status InitCnf(ClauseNode **G, Answer **ans, LiteralList literals[])
     //解初始化
     ltr_known = 0;
     *ans = (Answer *)malloc(sizeof(Answer));
-    (*ans)->branchLevel = (int *)malloc(sizeof(int) * (ltr_num + 1));
-    (*ans)->value = (int *)malloc(sizeof(int) * (ltr_num + 1));
-    (*ans)->searched = (int *)malloc(sizeof(int) * (ltr_num + 1));
-    (*ans)->unitClause = (int *)malloc(sizeof(int) * (ltr_num + 1));
 
-    literals = (LiteralList *)malloc(sizeof(LiteralList));
-    for (int i = 0; i <= ltr_num; i++)
+    for (int i = 0; i <= (ltr_num + 1); i++)
     {
         (*ans)->value[i] = NONE;
         (*ans)->branchLevel[i] = 0;
@@ -79,6 +73,7 @@ status AddClause(ClauseNode *ctemp, int var, LiteralList literals[])
     clp = clp->next;
     clp->p = ctemp;
     clp->next = NULL;
+    return TRUE;
 }
 
 /**
@@ -86,9 +81,9 @@ status AddClause(ClauseNode *ctemp, int var, LiteralList literals[])
  * 函数功能：读取cnf文件中的字符进行预处理
  * 返回值：TRUE or FALSE
 **/
-status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *filename)
+status LoadCnfFile(ClauseNode **G, Answer **ans, LiteralList literals[], char *filename)
 {
-    char string[80];
+    char string[20];
     ClauseNode *ctemp = NULL, *cp = NULL;  //子句操作指针
     LiteralNode *ltemp = NULL, *lp = NULL; //文字操作指针
     int var = 0;                           //变量的值
@@ -107,7 +102,7 @@ status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *fi
     fscanf(fp, "%d", &ltr_num); //读取文字数量
     fscanf(fp, "%d", &cls_num); //读取子句数量
 
-    InitCnf(G, &ans, literals); //初始化
+    InitCnf(G, ans, literals); //初始化
 
     fscanf(fp, "%d", &var); //变量赋值
     while (1)
@@ -120,9 +115,9 @@ status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *fi
         while (var)
         {
             ++numClauseVar;
-            if (ans->value[abs(var)] == NONE)
+            if ((*ans)->value[abs(var)] == NONE)
             {
-                ans->value[abs(var)] = UNKNOWN;
+                (*ans)->value[abs(var)] = UNKNOWN;
             } //答案文字状态更改
 
             ltemp = (LiteralNode *)malloc(sizeof(LiteralNode)); //初始化文字临时结点
@@ -145,10 +140,10 @@ status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *fi
 
         if (numClauseVar == 1)
         {
-            ans->value[abs(lp->x)] = lp->x / abs(lp->x); //单子句该变量解已知
-            ++ltr_known;                                 //已知文字数加一
+            (*ans)->value[abs(lp->x)] = lp->x / abs(lp->x); //单子句该变量解已知
+            ++ltr_known;                                    //已知文字数加一
         }
-        else if (*G = NULL)
+        else if ((*G) == NULL)
         {
             cp = ctemp;
             *G = cp;

@@ -60,15 +60,15 @@ typedef struct literalList
 //答案结构定义
 typedef struct answer
 {
-    int *branchLevel; //赋值时的决策树高度
-    int *value;       //TRUE or FALSE or UNKNOWN or NONE
-    int *searched;    //已被搜索的情况数
-    int *unitClause;  //标记是否存在该变量的单子句
+    int branchLevel[Max_Ltr_Num]; //赋值时的决策树高度
+    int value[Max_Ltr_Num];       //TRUE or FALSE or UNKNOWN or NONE
+    int searched[Max_Ltr_Num];    //已被搜索的情况数
+    int unitClause[Max_Ltr_Num];  //标记是否存在该变量的单子句
 } Answer;
 
 /*函数声明*/
 //cnf.c中相关函数声明
-status InitCnf(ClauseList **G, Answer **ans, LiteralList literals[]);
+status InitCnf(ClauseNode **G, Answer **ans, LiteralList literals[]);
 status AddClause(ClauseNode *ctemp, int var, LiteralList literals[]);
-status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *filename);
+status LoadCnfFile(ClauseNode **G, Answer **ans, LiteralList literals[], char *filename);
 #endif
