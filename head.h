@@ -13,9 +13,9 @@
 #include <math.h>
 /*常量定义*/
 typedef int status;
-extern int ltr_num;   //全部文字数
-extern int cls_num;   //全部子句数
-extern int ltr_known; //已知文字数
+int ltr_num;   //全部文字数
+int cls_num;   //全部子句数
+int ltr_known; //已知文字数
 //变量相关
 #define TRUE 1           //变量为真
 #define FALSE -1         //变量为假

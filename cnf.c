@@ -68,7 +68,7 @@ status AddClause(ClauseNode *ctemp, int var, LiteralList literals[])
     }
     else
     {
-        clp = literals[var].neg;
+        clp = literals[-var].neg;
     } //按正负文字分类该文字对应子句
     while (clp->next)
     {
@@ -88,14 +88,14 @@ status AddClause(ClauseNode *ctemp, int var, LiteralList literals[])
 **/
 status LoadCnfFile(ClauseNode **G, Answer *ans, LiteralList literals[], char *filename)
 {
-    char string[80] = 0;
+    char string[80];
     ClauseNode *ctemp = NULL, *cp = NULL;  //子句操作指针
     LiteralNode *ltemp = NULL, *lp = NULL; //文字操作指针
     int var = 0;                           //变量的值
     int numClauseVar = 0;                  //每个字句的变量数
     FILE *fp = NULL;
 
-    if (fp = fopen(filename, "r") == NULL) //打开文件
+    if ((fp = fopen(filename, "r")) == NULL) //打开文件
         return FALSE;
     while (1)
     {

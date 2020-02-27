@@ -4,7 +4,6 @@
 **/
 
 #include "head.h"
-#include "cnf.c"
 
 int main()
 {
@@ -14,6 +13,6 @@ int main()
     char filename[15];
     printf("Please input the file path:\n");
     scanf("%s", filename);
-    LoadCnfFile(&S,ans,literals,filename);
+    LoadCnfFile(&S, ans, literals, filename);
     return 0;
 }
