@@ -27,6 +27,7 @@ int ltr_known; //已知文字数
 #define UNSATISFIABLE 0 //不可满足
 #define CONFLICT 0      //存在冲突
 #define OTHERS 2        //其他情况
+#define UNIT -1         //单子句
 
 /*数据结构定义*/
 //文字结点定义
@@ -71,4 +72,12 @@ typedef struct answer
 status InitCnf(ClauseNode **G, Answer **ans, LiteralList literals[]);
 status AddClause(ClauseNode *ctemp, int var, LiteralList literals[]);
 status LoadCnfFile(ClauseNode **G, Answer **ans, LiteralList literals[], char *filename);
+
+//dpll.中相关函数声明
+status decide_next_branch(Answer *ans, int *ltr_val,int *blevel);
+status unit_clause_deduce(Answer *ans, LiteralList literals[], ClauseList **clp,int blevel);
+status deduce(Answer *ans, LiteralList literals[], ClauseList *root,int blevel);
+int back_track(int *blevel, int ltr_val, Answer *ans);
+status dpll(Answer *ans, LiteralList literals[]);
+void show_answer(Answer *ans);
 #endif
