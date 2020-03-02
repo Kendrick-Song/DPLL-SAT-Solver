@@ -1,7 +1,8 @@
 /**
  * 文件名称：head.h
  * 文件描述：SAT求解器相关常量，数据结构定义，相关操作函数声明
-**/
+ */
+
 #ifndef _HEAD_H
 #define _HEAD_H
 
@@ -16,11 +17,11 @@ typedef int status;
 int ltr_num;   //全部文字数
 int cls_num;   //全部子句数
 int ltr_known; //已知文字数
-//变量相关
-#define TRUE 1           //变量为真
-#define FALSE -1         //变量为假
-#define UNKNOWN 0        //变量未赋值
-#define NONE 2           //变量不存在
+//变元相关
+#define TRUE 1           //变元为真
+#define FALSE -1         //变元为假
+#define UNKNOWN 0        //变元未赋值
+#define NONE 2           //变元不存在
 #define Max_Ltr_Num 4000 //最大文字数
 //范式相关
 #define SATISFIABLE 1   //可满足
@@ -30,54 +31,36 @@ int ltr_known; //已知文字数
 #define UNIT -1         //单子句
 
 /*数据结构定义*/
-//文字结点定义
-typedef struct literalNode
+//变元结点定义
+typedef struct varNode
 {
-    int x;                                //文字的值
-    struct literalNode *next_literalNode; //指向下一个文字结点
-} LiteralNode;
+    int var;                      //变元
+    struct varNode *next_varNode; //指向下一个变元结点
+} VarNode;
 
 //子句结点定义
 typedef struct clauseNode
 {
-    LiteralNode *p;                     //指向子句的文字链
-    struct clauseNode *next_caluseNode; //指向下一个子句结点
+    VarNode *vn;                        //指向文字结点
+    struct clauseNode *next_clauseNode; //指向下一个子句结点
 } ClauseNode;
-
-//子句链表定义
-typedef struct clauseList
-{
-    ClauseNode *p;           //指向包含该文字的一个子句
-    struct clauseList *next; //指向包含该文字的下一个子句
-} ClauseList;
 
 //文字邻接表定义
 typedef struct literalList
 {
-    ClauseList *pos; //正文字邻接表
-    ClauseList *neg; //负文字邻接表
+    int value;       //TRUE or FALSE or UNKNOWN or NONE
+    int blevel;      //赋值时的决策级
+    int assigned;    //被赋值的次数
+    int unit_clause; //标记是否存在该变元的单子句
+    ClauseNode *pos; //正文字邻接表
+    ClauseNode *neg; //负文字邻接表
 } LiteralList;
 
-//答案结构定义
-typedef struct answer
-{
-    int branchLevel[Max_Ltr_Num]; //赋值时的决策树高度
-    int value[Max_Ltr_Num];       //TRUE or FALSE or UNKNOWN or NONE
-    int searched[Max_Ltr_Num];    //已被搜索的情况数
-    int unitClause[Max_Ltr_Num];  //标记是否存在该变量的单子句
-} Answer;
-
 /*函数声明*/
-//cnf.c中相关函数声明
-status InitCnf(ClauseNode **G, Answer **ans, LiteralList literals[]);
-status AddClause(ClauseNode *ctemp, int var, LiteralList literals[]);
-status LoadCnfFile(ClauseNode **G, Answer **ans, LiteralList literals[], char *filename);
+//cnf.c中函数声明
+void free_clause(ClauseNode *cfront);
+void add_clause(LiteralList literals[], ClauseNode *ctemp, int val);
+void init_cnf(LiteralList literals[]);
+status load_file(LiteralList literals[], char filename[]);
 
-//dpll.中相关函数声明
-status decide_next_branch(Answer *ans, int *ltr_val,int *blevel);
-status unit_clause_deduce(Answer *ans, LiteralList literals[], ClauseList **clp,int blevel);
-status deduce(Answer *ans, LiteralList literals[], ClauseList *root,int blevel);
-int back_track(int *blevel, int ltr_val, Answer *ans);
-status dpll(Answer *ans, LiteralList literals[]);
-void show_answer(Answer *ans);
 #endif

@@ -1,165 +1,180 @@
 /**
  * 文件名称：cnf.c
  * 文件描述：CNF相关操作函数定义
-**/
+ */
+
 #include "head.h"
-/**
- * 函数名称：InitCnf
- * 函数功能：初始化cnf相关结构
- * 返回值：TRUE
-**/
-status InitCnf(ClauseNode **G, Answer **ans, LiteralList literals[])
-{
-    //子句初始化
-    ClauseNode *cfront = *G, *crear = NULL;    //子句链表操作指针
-    LiteralNode *lfront = NULL, *lrear = NULL; //文字链表操作指针
-    while (cfront)
-    {
-        crear = cfront->next_caluseNode;
-        lfront = cfront->p;
-        while (lfront)
-        {
-            lrear = lfront->next_literalNode;
-            free(lfront);
-            lfront = lrear;
-        } //文字结点初始化
-        free(cfront);
-        cfront = crear;
-    } //子句结点初始化
-    *G = NULL;
-
-    //解初始化
-    ltr_known = 0;
-    *ans = (Answer *)malloc(sizeof(Answer));
-
-    for (int i = 0; i <= (ltr_num + 1); i++)
-    {
-        (*ans)->value[i] = NONE;
-        (*ans)->branchLevel[i] = 0;
-        (*ans)->searched[i] = 0;
-        (*ans)->unitClause[i] = 0;
-        //文字邻接表初始化
-        literals[i].pos = (ClauseList *)malloc(sizeof(ClauseList));
-        literals[i].pos->p = NULL;
-        literals[i].pos->next = NULL;
-        literals[i].neg = (ClauseList *)malloc(sizeof(ClauseList));
-        literals[i].neg->p = NULL;
-        literals[i].neg->next = NULL;
-    }
-    return TRUE;
-}
-/**
- * 函数名称：AddClause
- * 函数功能：将子句添加到对应文字的邻接表中
- * 返回值：TRUE
-**/
-status AddClause(ClauseNode *ctemp, int var, LiteralList literals[])
-{
-    ClauseList *clp = NULL;
-    if (var > 0)
-    {
-        clp = literals[var].pos;
-    }
-    else
-    {
-        clp = literals[-var].neg;
-    } //按正负文字分类该文字对应子句
-    while (clp->next)
-    {
-        clp = clp->next;
-    } //找到最后一个子句链
-
-    clp->next = (ClauseList *)malloc(sizeof(ClauseList)); //创建新子句链
-    clp = clp->next;
-    clp->p = ctemp;
-    clp->next = NULL;
-    return TRUE;
-}
 
 /**
- * 函数名称：LoadCnfFile
- * 函数功能：读取cnf文件中的字符进行预处理
- * 返回值：TRUE or FALSE
-**/
-status LoadCnfFile(ClauseNode **G, Answer **ans, LiteralList literals[], char *filename)
+ * 函数名称：load_file
+ * 函数功能：读取cnf文件到内存
+ * 返回值：TRUE/FALSE
+ */
+status load_file(LiteralList literals[], char filename[])
 {
-    char string[20];
-    ClauseNode *ctemp = NULL, *cp = NULL;  //子句操作指针
-    LiteralNode *ltemp = NULL, *lp = NULL; //文字操作指针
-    int var = 0;                           //变量的值
-    int numClauseVar = 0;                  //每个字句的变量数
+    VarNode *vtemp = NULL, *vp = NULL;    //变元结点操作指针
+    ClauseNode *ctemp = NULL; //子句操作指针
     FILE *fp = NULL;
+    int val = 0;            //变元值
+    int clause_var_num = 0; //每个字句的变元数
+    char string[20];
 
-    if ((fp = fopen(filename, "r")) == NULL) //打开文件
+    if ((fp = fopen(filename, "r")) == NULL)
+    {
         return FALSE;
+    } //打开文件失败则返回
+
     while (1)
     {
         fscanf(fp, "%s", string);
         if (strcmp(string, "cnf") == 0) //读到cnf退出循环
             break;
-    }
+    } //过滤无用字符
 
     fscanf(fp, "%d", &ltr_num); //读取文字数量
     fscanf(fp, "%d", &cls_num); //读取子句数量
 
-    InitCnf(G, ans, literals); //初始化
+    init_cnf(literals); //初始化
 
-    fscanf(fp, "%d", &var); //变量赋值
+    fscanf(fp, "%d", &val); //读取第一个变元
     while (1)
     {
-        numClauseVar = 0;
-        ctemp = (ClauseNode *)malloc(sizeof(ClauseNode)); //初始化子句临时结点
-        ctemp->p = NULL;
-        ctemp->next_caluseNode = NULL;
-        lp = ctemp->p;
-        while (var)
-        {
-            ++numClauseVar;
-            if ((*ans)->value[abs(var)] == NONE)
-            {
-                (*ans)->value[abs(var)] = UNKNOWN;
-            } //答案文字状态更改
+        ctemp = (ClauseNode *)malloc(sizeof(ClauseNode));
+        ctemp->vn = NULL;
+        ctemp->next_clauseNode = NULL;
+        //初始化子句临时结点
 
-            ltemp = (LiteralNode *)malloc(sizeof(LiteralNode)); //初始化文字临时结点
-            ltemp->x = var;                                     //结点赋值
-            ltemp->next_literalNode = NULL;
-            if (numClauseVar == 1)
+        clause_var_num = 0; //初始化当前子句变元数
+        while (val)
+        {
+            clause_var_num++;
+            literals[abs(val)].value = UNKNOWN; //文字值状态更改
+
+            vtemp = (VarNode *)malloc(sizeof(VarNode));
+            vtemp->var = val; //结点赋值
+            vtemp->next_varNode = NULL;
+            //初始化变元临时结点
+
+            if (clause_var_num == 1)
             {
-                lp = ltemp;
-                ctemp->p = lp;
+                vp = vtemp;
+                ctemp->vn = vp;
             } //存储子句中首个文字
             else
             {
-                lp->next_literalNode = ltemp;
-                lp = lp->next_literalNode;
+                vp->next_varNode = vtemp;
+                vp = vp->next_varNode;
             } //存储子句中非首个文字
 
-            AddClause(ctemp, var, literals); //将子句添加到对应文字的邻接表
-            fscanf(fp, "%d", &var);
+            add_clause(literals, ctemp, val); //将子句添加到对应文字的邻接表
+
+            fscanf(fp, "%d", &val);
         } //创建子句
 
-        if (numClauseVar == 1)
+        if (clause_var_num == 1)
         {
-            (*ans)->value[abs(lp->x)] = lp->x / abs(lp->x); //单子句该变量解已知
-            ++ltr_known;                                    //已知文字数加一
-        }
-        else if ((*G) == NULL)
-        {
-            cp = ctemp;
-            *G = cp;
-            cp->next_caluseNode = NULL;
-        } //创建子句链表首结点
-        else
-        {
-            cp->next_caluseNode = ctemp;
-            cp = cp->next_caluseNode;
-        } //创建子句链表非首结点
-        fscanf(fp, "%d", &var);
+            literals[abs(vp->var)].value = vp->var / abs(vp->var);
+            ltr_known++;
+        } //该子句为单子句，则该变元为真，该文字值已知
+
+        fscanf(fp, "%d", &val); //读取下一个变元
+
         if (feof(fp))
         {
             break;
         } //读取结束
     }
-    fclose(fp);
     return TRUE;
+}
+
+/**
+ * 函数名称：InitCnf
+ * 函数功能：初始化cnf相关结构
+ * 返回值：TRUE
+ */
+void init_cnf(LiteralList literals[])
+{
+    for (int i = 1; i <= ltr_num; i++)
+    {
+        literals[i].value = NONE;
+        literals[i].assigned = 0;
+        literals[i].blevel = 0;
+        literals[i].unit_clause = 0;
+        //文字相关参数初始化
+
+        if (literals[i].pos != NULL)
+        {
+            free_clause(literals[i].pos); //释放正文字相关子句
+            literals[i].pos = NULL;
+
+            free_clause(literals[i].neg); //释放负文字相关子句
+            literals[i].neg = NULL;
+        } //若该文字头结点存在，说明有子句，应释放
+
+        literals[i].pos = (ClauseNode *)malloc(sizeof(ClauseNode));
+        literals[i].pos->vn = NULL;
+        literals[i].pos->next_clauseNode = NULL;
+        //正文字头结点初始化
+
+        literals[i].neg = (ClauseNode *)malloc(sizeof(ClauseNode));
+        literals[i].neg->vn = NULL;
+        literals[i].neg->next_clauseNode = NULL;
+        //负文字头结点初始化
+
+    } //文字数组清空
+}
+
+/**
+ * 函数名称：free_clause
+ * 函数功能：释放存在的子句内存
+ * 返回值：void
+ */
+void free_clause(ClauseNode *cfront)
+{
+    VarNode *vfront = NULL, *vrear = NULL;       //变元结点操作指针
+    ClauseNode *crear = cfront->next_clauseNode; //指向首结点
+
+    while (crear != NULL)
+    {
+        vfront = crear->vn;
+        while (vfront != NULL)
+        {
+            vrear = vfront->next_varNode;
+            free(vfront);
+            vfront = vrear;
+        } //释放变元结点内存
+
+        crear->vn = NULL;
+        crear = crear->next_clauseNode; //指向下一个子句结点
+        free(cfront->next_clauseNode);
+        cfront->next_clauseNode = crear;
+    }
+    return;
+}
+
+/**
+ * 函数名称：add_clause
+ * 函数功能：将子句添加到对应文字的邻接表
+ * 返回值：void
+ */
+void add_clause(LiteralList literals[], ClauseNode *ctemp, int val)
+{
+    ClauseNode *cp = NULL;
+
+    if (val > 0)
+    {
+        cp = literals[val].pos;
+    }
+    else
+    {
+        cp = literals[-val].neg;
+    } //按正负文字分类该文字对应子句
+
+    while (cp->next_clauseNode)
+    {
+        cp = cp->next_clauseNode;
+    } //找到最后一个子句结点
+
+    cp->next_clauseNode = ctemp; //创建新子句结点
+    return;
 }
