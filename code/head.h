@@ -13,10 +13,6 @@
 #include <time.h>
 #include <math.h>
 /*常量定义*/
-typedef int status;
-int ltr_num;   //全部文字数
-int cls_num;   //全部子句数
-int ltr_known; //已知文字数
 //变元相关
 #define TRUE 1           //变元为真
 #define FALSE -1         //变元为假
@@ -55,6 +51,13 @@ typedef struct literalList
     ClauseNode *pos; //正文字邻接表
     ClauseNode *neg; //负文字邻接表
 } LiteralList;
+
+/*变量定义*/
+typedef int status;
+int ltr_num;   //全部文字数
+int cls_num;   //全部子句数
+int ltr_known; //已知文字数
+ClauseNode *clist; //子句链表用于检查
 
 /*函数声明*/
 //cnfparser.c中函数声明

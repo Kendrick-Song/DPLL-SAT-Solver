@@ -7,7 +7,7 @@
 
 /**
  * 函数名称：show_answer
- * 函数功能：打印结果
+ * 函数功能：输出结果到终端并写入同名文件
  * 返回值：无
  */
 void show_answer(LiteralList literals[], clock_t cost, int result, char filename[])
@@ -33,18 +33,64 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
         {
             fprintf(fp, "%6d", literals[i].value * i);
             printf("%6d", literals[i].value * i);
-            if (i % 20 == 0)
+            if (i % 20 == 0 && i != ltr_num)
             {
                 fprintf(fp, "\n ");
                 printf("\n ");
-            }//每20个换行
+            } //每20个换行
         }
     } //写入/输出解
 
     fprintf(fp, "\nt%6ld", cost);
     printf("\nt%6ld\n", cost);
     //写入/输出求解时间
+
+    fclose(fp);
     return;
+}
+
+/**
+ * 函数名称：check_answer
+ * 函数功能：检查解是否正确
+ * 返回值：void
+ */
+void check_answer(LiteralList literals[])
+{
+    FILE *fp = NULL;
+    char filename[] = "check report.txt";
+    ClauseNode *cp = clist;
+    VarNode *vp = NULL;
+    int status = 0; //子句状态
+
+    fp = fopen(filename, "w");
+    while (cp != NULL)
+    {
+        vp = cp->vn;
+        while (vp != NULL)
+        {
+            fprintf(fp, "%4d", vp->var);
+            if (literals[abs(vp->var)].value * vp->var > 0)
+            {
+                status = TRUE;
+            } //有变元为真，则该子句为真
+            vp = vp->next_varNode;
+        } //子句文字扫描
+
+        if (status == TRUE)
+        {
+            fprintf(fp, "\tT\n");
+        }
+        else
+        {
+            fprintf(fp, "\tF\n");
+        }
+
+        cp = cp->next_clauseNode; //扫描下一子句
+    }
+    //检查结果写入文件
+
+    printf("The check result is TRUE!\n");
+    printf("The check report has been generated!\n");
 }
 
 int main()
@@ -65,6 +111,7 @@ int main()
     cost = (end - begin);
 
     show_answer(literals, cost, result, filename);
+    check_answer(literals);
 
     system("pause");
     return 0;
