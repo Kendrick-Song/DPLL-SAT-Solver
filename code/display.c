@@ -1,6 +1,6 @@
 /**
- * 文件名称：main.c
- * 文件描述：主界面的显示，函数调用
+ * 文件名称：display.c
+ * 文件描述：SAT界面的显示，函数调用
  */
 
 #include "head.h"
@@ -33,16 +33,16 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
         {
             fprintf(fp, "%6d", literals[i].value * i);
             printf("%6d", literals[i].value * i);
-            if (i % 20 == 0 && i != ltr_num)
+            if (i % 10 == 0 && i != ltr_num)
             {
                 fprintf(fp, "\n ");
                 printf("\n ");
-            } //每20个换行
+            } //每10个换行
         }
     } //写入/输出解
 
     fprintf(fp, "\nt%6ld", cost);
-    printf("\nt%6ld\n", cost);
+    printf("\nt%6ld ms\n", cost);
     //写入/输出求解时间
 
     fclose(fp);
@@ -56,6 +56,12 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
  */
 void check_answer(LiteralList literals[])
 {
+    if (literals[1].value == UNKNOWN)
+    {
+        printf("There's no Answer to check!\n");
+        return;
+    }
+
     FILE *fp = NULL;
     char filename[] = "check report.txt";
     ClauseNode *cp = clist;
@@ -88,7 +94,7 @@ void check_answer(LiteralList literals[])
         cp = cp->next_clauseNode; //扫描下一子句
     }
     //检查结果写入文件
-    
+
     if (status == TRUE)
     {
         printf("The check result is TRUE!\n");
@@ -97,30 +103,60 @@ void check_answer(LiteralList literals[])
     {
         printf("The check result is FALSE!\n");
     }
-    
+
     printf("The check report has been generated!\n");
 }
 
-int main()
+void sat()
 {
     LiteralList literals[Max_Ltr_Num];
     clock_t begin = 0, end = 0, cost = 0; //计时相关变量
     char filename[100];
     int result = 0;
 
-    printf("Please input the file path:\n");
-    scanf("%s", filename);
-    load_file(literals, filename);
-    printf("Load File Successfully!\n");
+    int op = 1;
+    while (op)
+    {
+        printf("\n\n");
+        printf("%20cSAT<\n", '>');
+        printf("%10c***********************\n", ' ');
+        printf("%13c1.  New SAT\n", ' ');
+        printf("%13c2.  Check Answer\n", ' ');
+        printf("%13c0.  Back\n", ' ');
+        printf("%10c***********************\n", ' ');
+        scanf("%d", &op);
+        system("cls");
+        switch (op)
+        {
+        case 1:
+            printf("Please input the file path:\n");
+            scanf("%s", filename);
+            if (load_file(literals, filename) == FALSE)
+            {
+                printf("Failed to Load File !\n");
+            }
+            else
+            {
+                printf("Load File Successfully!\n");
+            } //文件读取
 
-    begin = clock();
-    result = dpll(literals);
-    end = clock();
-    cost = (end - begin);
+            begin = clock();
+            result = dpll(literals);
+            end = clock();
+            cost = (end - begin);
+            //dpll求解并计时
 
-    show_answer(literals, cost, result, filename);
-    check_answer(literals);
-
-    system("pause");
-    return 0;
+            show_answer(literals, cost, result, filename); //输出答案到终端和文件
+            system("pause");
+            break;
+        case 2:
+            check_answer(literals);
+            system("pause");
+            break;
+        case 0:
+            return;
+        default:
+            break;
+        }
+    }
 }

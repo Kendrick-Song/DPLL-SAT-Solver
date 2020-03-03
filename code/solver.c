@@ -1,5 +1,5 @@
 /**
- * 文件名称：dpll.c
+ * 文件名称：solver.c
  * 文件描述：dpll求解过程相关函数定义
  */
 
@@ -8,7 +8,7 @@
 /**
  * 函数名称：dpll
  * 函数功能：dpll算法求解
- * 返回值：SATISFIABLE UNSATISFIABLE
+ * 返回值：SATISFIABLE/UNSATISFIABLE
  */
 status dpll(LiteralList literals[])
 {
@@ -31,23 +31,31 @@ status dpll(LiteralList literals[])
             status = deduce(literals, cp, blevel); //BCP传播
 
             if (status == SATISFIABLE)
+            {
                 return SATISFIABLE;
+            }
             else if (status == CONFLICT)
             {
-                val = back_track(literals, &blevel, val);
+                val = back_track(literals, &blevel, val); //回溯
 
                 if (blevel == 0)
+                {
                     return UNSATISFIABLE;
+                }
                 else
                 {
                     literals[val].value *= -1;
                     literals[val].assigned++;
                     if (literals[val].value < 0)
+                    {
                         val *= -1;
+                    }
                 }
             }
             else if (status == OTHERS)
+            {
                 break;
+            }
         }
     }
 }
@@ -240,9 +248,13 @@ int back_track(LiteralList literals[], int *blevel, int val)
                 break;
         }
         else if (literals[parent].assigned == 2)
+        {
             (*blevel)--;
+        }
         else
+        {
             break;
+        }
     }
     return parent;
 }

@@ -12,7 +12,7 @@
  */
 status load_file(LiteralList literals[], char filename[])
 {
-    VarNode *vtemp = NULL, *vp = NULL;     //变元结点操作指针
+    VarNode *vtemp = NULL, *vp = NULL;    //变元结点操作指针
     ClauseNode *ctemp = NULL, *cp = NULL; //子句操作指针
     FILE *fp = NULL;
     int val = 0;            //变元值
@@ -116,14 +116,18 @@ void init_cnf(LiteralList literals[])
         literals[i].blevel = 0;
         literals[i].unit_clause = 0;
 
+      
         if (literals[i].pos != NULL)
         {
-            free_clause(literals[i].pos); //释放正文字相关子句
+            free(literals[i].pos);
             literals[i].pos = NULL;
-
-            free_clause(literals[i].neg); //释放负文字相关子句
+        }
+        if (literals[i].neg != NULL)
+        {
+            free(literals[i].neg);
             literals[i].neg = NULL;
-        } //若该文字头结点存在，说明有子句，应释放
+        }
+  
 
         literals[i].pos = (ClauseNode *)malloc(sizeof(ClauseNode));
         literals[i].pos->vn = NULL;
