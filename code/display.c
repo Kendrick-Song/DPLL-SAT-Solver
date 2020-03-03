@@ -32,6 +32,7 @@ int main()
     printf("Please input the file path:\n");
     scanf("%s", filename);
     load_file(literals, filename);
+    printf("Load File Successfully!\n");
 
     begin = clock();
     status = dpll(literals);
