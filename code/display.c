@@ -10,15 +10,40 @@
  * 函数功能：打印结果
  * 返回值：无
  */
-void show_answer(LiteralList literals[])
+void show_answer(LiteralList literals[], clock_t cost, int result, char filename[])
 {
-    for (int i = 1; i <= ltr_num; i++)
+    FILE *fp = NULL;
+
+    char *suffix = strrchr(filename, '.'); //找到'.'最后一次出现的位置
+    suffix[1] = 'r';
+    suffix[2] = 'e';
+    suffix[3] = 's';
+    //文件名后缀更改
+
+    fp = fopen(filename, "w");
+    fprintf(fp, "s%6d\n", result);
+    printf("s%6d\n", result);
+    //写入/输出求解结果
+
+    fprintf(fp, "v");
+    printf("v");
+    if (result == TRUE)
     {
-        if (literals[i].value > 0)
-            printf("%d : TRUE\n", i);
-        else
-            printf("%d : FALSE\n", i);
-    }
+        for (int i = 1; i <= ltr_num; i++)
+        {
+            fprintf(fp, "%6d", literals[i].value * i);
+            printf("%6d", literals[i].value * i);
+            if (i % 20 == 0)
+            {
+                fprintf(fp, "\n ");
+                printf("\n ");
+            }//每20个换行
+        }
+    } //写入/输出解
+
+    fprintf(fp, "\nt%6ld", cost);
+    printf("\nt%6ld\n", cost);
+    //写入/输出求解时间
     return;
 }
 
@@ -26,8 +51,8 @@ int main()
 {
     LiteralList literals[Max_Ltr_Num];
     clock_t begin = 0, end = 0, cost = 0; //计时相关变量
-    char filename[30];
-    int status = 0;
+    char filename[100];
+    int result = 0;
 
     printf("Please input the file path:\n");
     scanf("%s", filename);
@@ -35,15 +60,12 @@ int main()
     printf("Load File Successfully!\n");
 
     begin = clock();
-    status = dpll(literals);
+    result = dpll(literals);
     end = clock();
     cost = (end - begin);
 
-    if (status == SATISFIABLE)
-    {
-        show_answer(literals);
-        printf("Cost time: %ld ms\n", cost);
-    }
+    show_answer(literals, cost, result, filename);
+
     system("pause");
     return 0;
 }
