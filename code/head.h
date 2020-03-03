@@ -62,5 +62,11 @@ void free_clause(ClauseNode *cfront);
 void add_clause(LiteralList literals[], ClauseNode *ctemp, int val);
 void init_cnf(LiteralList literals[]);
 status load_file(LiteralList literals[], char filename[]);
+//dpll.c中函数声明
+void decide_next_branch(LiteralList literals[], int *val, int *blevel);
+status deduce(LiteralList literals[], ClauseNode *root, int blevel);
+status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel);
+int back_track(LiteralList literals[], int *blevel, int val);
+status dpll(LiteralList literals[]);
 
 #endif

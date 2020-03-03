@@ -28,12 +28,26 @@ status dpll(LiteralList literals[])
                 cp = literals[-val].pos->next_clauseNode;
             } //正文字为真，指向负文字子句链，反之亦然
 
-            status = deduce(literals, cp, blevel);
+            status = deduce(literals, cp, blevel); //BCP传播
 
-            if(status == SATISFIABLE)
-            {
+            if (status == SATISFIABLE)
                 return SATISFIABLE;
+            else if (status == CONFLICT)
+            {
+                val = back_track(literals, &blevel, val);
+
+                if (blevel == 0)
+                    return UNSATISFIABLE;
+                else
+                {
+                    literals[val].value *= -1;
+                    literals[val].assigned++;
+                    if (literals[val].value < 0)
+                        val *= -1;
+                }
             }
+            else if (status == OTHERS)
+                break;
         }
     }
 }
@@ -88,12 +102,10 @@ status deduce(LiteralList literals[], ClauseNode *root, int blevel)
             top++;
         } //广度搜索
 
-        top--;
+        top--; //空指针退栈
 
         if (status == CONFLICT)
-        {
             return CONFLICT;
-        }
 
         if (top)
         {
@@ -108,7 +120,7 @@ status deduce(LiteralList literals[], ClauseNode *root, int blevel)
 
     } //搜索所有影响的变元
 
-    if(ltr_known <ltr_num)
+    if (ltr_known < ltr_num)
     {
         return OTHERS;
     }
@@ -116,7 +128,6 @@ status deduce(LiteralList literals[], ClauseNode *root, int blevel)
     {
         return SATISFIABLE;
     }
-    
 }
 
 /**
@@ -181,4 +192,57 @@ status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel)
     } //推理结束且仍有未知变元
 
     return SATISFIABLE;
+}
+
+/**
+ * 函数名称：back_track
+ * 函数功能：回溯
+ * 返回值：文字值
+ */
+int back_track(LiteralList literals[], int *blevel, int val)
+{
+    int parent = abs(val);
+    while (*blevel != 0)
+    {
+        for (int i = 1; i <= ltr_num; i++)
+        {
+            if (i != parent && literals[i].blevel == *blevel)
+            {
+                literals[i].value = UNKNOWN;
+                literals[i].blevel = 0;
+                literals[i].assigned = 0;
+                literals[i].unit_clause = 0;
+                ltr_known--;
+            } //初始化该决策级的文字相关参数
+        }
+
+        if (*blevel != 1)
+        {
+            if (literals[parent].assigned == 2)
+            {
+                (*blevel)--;
+                literals[parent].value = UNKNOWN;
+                literals[parent].blevel = 0;
+                literals[parent].assigned = 0;
+                ltr_known--;
+                //被赋值次数为2，回退上一决策级，初始化该变元
+
+                for (int j = 1; j <= ltr_num; j++)
+                {
+                    if (literals[j].blevel == *blevel && literals[j].unit_clause == 0)
+                    {
+                        parent = j;
+                        break;
+                    }
+                }
+            }
+            else
+                break;
+        }
+        else if (literals[parent].assigned == 2)
+            (*blevel)--;
+        else
+            break;
+    }
+    return parent;
 }

@@ -12,8 +12,8 @@
  */
 status load_file(LiteralList literals[], char filename[])
 {
-    VarNode *vtemp = NULL, *vp = NULL;    //变元结点操作指针
-    ClauseNode *ctemp = NULL; //子句操作指针
+    VarNode *vtemp = NULL, *vp = NULL; //变元结点操作指针
+    ClauseNode *ctemp = NULL;          //子句操作指针
     FILE *fp = NULL;
     int val = 0;            //变元值
     int clause_var_num = 0; //每个字句的变元数
@@ -48,7 +48,8 @@ status load_file(LiteralList literals[], char filename[])
         while (val)
         {
             clause_var_num++;
-            literals[abs(val)].value = UNKNOWN; //文字值状态更改
+            if (literals[abs(val)].value == NONE)
+                literals[abs(val)].value = UNKNOWN; //文字值状态更改
 
             vtemp = (VarNode *)malloc(sizeof(VarNode));
             vtemp->var = val; //结点赋值
@@ -100,7 +101,6 @@ void init_cnf(LiteralList literals[])
         literals[i].assigned = 0;
         literals[i].blevel = 0;
         literals[i].unit_clause = 0;
-        //文字相关参数初始化
 
         if (literals[i].pos != NULL)
         {
@@ -175,6 +175,11 @@ void add_clause(LiteralList literals[], ClauseNode *ctemp, int val)
         cp = cp->next_clauseNode;
     } //找到最后一个子句结点
 
-    cp->next_clauseNode = ctemp; //创建新子句结点
+    cp->next_clauseNode = (ClauseNode *)malloc(sizeof(ClauseNode));
+    cp = cp->next_clauseNode; 
+    cp->vn = (*ctemp).vn;
+    cp->next_clauseNode = NULL;
+    //创建新子句结点
+    
     return;
 }
