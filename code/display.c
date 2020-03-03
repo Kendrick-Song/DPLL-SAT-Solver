@@ -88,8 +88,16 @@ void check_answer(LiteralList literals[])
         cp = cp->next_clauseNode; //扫描下一子句
     }
     //检查结果写入文件
-
-    printf("The check result is TRUE!\n");
+    
+    if (status == TRUE)
+    {
+        printf("The check result is TRUE!\n");
+    }
+    else
+    {
+        printf("The check result is FALSE!\n");
+    }
+    
     printf("The check report has been generated!\n");
 }
 
