@@ -109,6 +109,7 @@ status load_file(LiteralList literals[], char filename[])
  */
 void init_cnf(LiteralList literals[])
 {
+    ltr_known =0;
     for (int i = 1; i <= ltr_num; i++)
     {
         literals[i].value = NONE;
@@ -148,34 +149,6 @@ void init_cnf(LiteralList literals[])
         free(clist);
         clist = cp;
     } //子句链清空
-}
-
-/**
- * 函数名称：free_clause
- * 函数功能：释放存在的子句内存
- * 返回值：void
- */
-void free_clause(ClauseNode *cfront)
-{
-    VarNode *vfront = NULL, *vrear = NULL;       //变元结点操作指针
-    ClauseNode *crear = cfront->next_clauseNode; //指向首结点
-
-    while (crear != NULL)
-    {
-        vfront = crear->vn;
-        while (vfront != NULL)
-        {
-            vrear = vfront->next_varNode;
-            free(vfront);
-            vfront = vrear;
-        } //释放变元结点内存
-
-        crear->vn = NULL;
-        crear = crear->next_clauseNode; //指向下一个子句结点
-        free(cfront->next_clauseNode);
-        cfront->next_clauseNode = crear;
-    }
-    return;
 }
 
 /**

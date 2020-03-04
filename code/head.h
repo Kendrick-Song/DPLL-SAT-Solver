@@ -61,7 +61,6 @@ ClauseNode *clist; //子句链表用于检查
 
 /*函数声明*/
 //cnfparser.c中函数声明
-void free_clause(ClauseNode *cfront);
 void add_clause(LiteralList literals[], ClauseNode *ctemp, int val);
 void init_cnf(LiteralList literals[]);
 status load_file(LiteralList literals[], char filename[]);

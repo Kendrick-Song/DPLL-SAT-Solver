@@ -10,6 +10,7 @@ int main()
     int op = 1;
     while (op)
     {
+        system("cls");
         printf("\n\n");
         printf("%20cSAT<\n", '>');
         printf("%10c***********************\n", ' ');
@@ -18,7 +19,6 @@ int main()
         printf("%16c0.  Exit\n", ' ');
         printf("%10c***********************\n", ' ');
         scanf("%d", &op);
-        system("cls");
         switch (op)
         {
         case 1:

@@ -95,13 +95,15 @@ void check_answer(LiteralList literals[])
     }
     //检查结果写入文件
 
+    fprintf(fp, "\n");
+
     if (status == TRUE)
     {
-        printf("The check result is TRUE!\n");
+        printf("The result is TRUE!\n");
     }
     else
     {
-        printf("The check result is FALSE!\n");
+        printf("The result is FALSE!\n");
     }
 
     printf("The check report has been generated!\n");
@@ -117,6 +119,7 @@ void sat()
     int op = 1;
     while (op)
     {
+        system("cls");
         printf("\n\n");
         printf("%20cSAT<\n", '>');
         printf("%10c***********************\n", ' ');
@@ -125,7 +128,6 @@ void sat()
         printf("%13c0.  Back\n", ' ');
         printf("%10c***********************\n", ' ');
         scanf("%d", &op);
-        system("cls");
         switch (op)
         {
         case 1:
@@ -134,6 +136,9 @@ void sat()
             if (load_file(literals, filename) == FALSE)
             {
                 printf("Failed to Load File !\n");
+                getchar();
+                getchar();
+                break;
             }
             else
             {
@@ -147,11 +152,13 @@ void sat()
             //dpll求解并计时
 
             show_answer(literals, cost, result, filename); //输出答案到终端和文件
-            system("pause");
+            getchar();
+            getchar();
             break;
         case 2:
             check_answer(literals);
-            system("pause");
+            getchar();
+            getchar();
             break;
         case 0:
             return;
