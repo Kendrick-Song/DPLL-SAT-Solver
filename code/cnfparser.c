@@ -109,7 +109,7 @@ status load_file(LiteralList literals[], char filename[])
  */
 void init_cnf(LiteralList literals[])
 {
-    ltr_known =0;
+    ltr_known = 0;
     for (int i = 1; i <= ltr_num; i++)
     {
         literals[i].value = NONE;
@@ -117,7 +117,7 @@ void init_cnf(LiteralList literals[])
         literals[i].blevel = 0;
         literals[i].unit_clause = 0;
         //文字相关信息初始化
-      
+
         if (literals[i].pos != NULL)
         {
             free(literals[i].pos);
@@ -128,7 +128,6 @@ void init_cnf(LiteralList literals[])
             free(literals[i].neg);
             literals[i].neg = NULL;
         }
-  
 
         literals[i].pos = (ClauseNode *)malloc(sizeof(ClauseNode));
         literals[i].pos->vn = NULL;

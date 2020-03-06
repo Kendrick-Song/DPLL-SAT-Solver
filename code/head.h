@@ -55,9 +55,9 @@ typedef struct literalList
 
 /*变量定义*/
 typedef int status;
-int ltr_num;   //全部文字数
-int cls_num;   //全部子句数
-int ltr_known; //已知文字数
+int ltr_num;       //全部文字数
+int cls_num;       //全部子句数
+int ltr_known;     //已知文字数
 ClauseNode *clist; //子句链表用于检查
 
 /*函数声明*/
@@ -75,7 +75,5 @@ status dpll(LiteralList literals[]);
 void show_answer(LiteralList literals[], clock_t cost, int result, char filename[]);
 void check_answer(LiteralList literals[]);
 void sat();
-
-
 
 #endif
