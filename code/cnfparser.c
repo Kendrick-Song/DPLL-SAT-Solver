@@ -116,7 +116,7 @@ void init_cnf(LiteralList literals[])
         literals[i].assigned = 0;
         literals[i].blevel = 0;
         literals[i].unit_clause = 0;
-
+        //文字相关信息初始化
       
         if (literals[i].pos != NULL)
         {

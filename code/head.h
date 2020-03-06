@@ -12,6 +12,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+
 /*常量定义*/
 //变元相关
 #define TRUE 1           //变元为真
@@ -44,7 +45,7 @@ typedef struct clauseNode
 //文字邻接表定义
 typedef struct literalList
 {
-    int value;       //TRUE or FALSE or UNKNOWN or NONE
+    int value;       //TRUE/FALSE/UNKNOWN/NONE
     int blevel;      //赋值时的决策级
     int assigned;    //被赋值的次数
     int unit_clause; //标记是否存在该变元的单子句

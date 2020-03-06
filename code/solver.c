@@ -36,7 +36,7 @@ status dpll(LiteralList literals[])
             }
             else if (status == CONFLICT)
             {
-                val = back_track(literals, &blevel, val); //回溯
+                val = back_track(literals, &blevel, val); //回溯,返回需要更改决策的变元
 
                 if (blevel == 0)
                 {
