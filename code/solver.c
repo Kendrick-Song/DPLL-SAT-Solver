@@ -16,7 +16,8 @@ status dpll(LiteralList literals[])
     ClauseNode *cp = NULL;
     while (1)
     {
-        decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
+        // decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
+        VSIDS(literals, &val, &blevel); //分支选择，返回选择为真的变元
         while (TRUE)
         {
             if (val > 0)
@@ -81,6 +82,36 @@ void decide_next_branch(LiteralList literals[], int *val, int *blevel)
         }
     }
     return;
+}
+
+/**
+ * 函数名称：VSIDS
+ * 函数功能：选择搜索分支
+ * 返回值：void
+ */
+void VSIDS(LiteralList literals[], int *val, int *blevel)
+{
+    int temp = 0;
+    int var = 0;
+    for (int i = 1; i <= ltr_num; i++)
+    {
+        if (literals[i].value == UNKNOWN && literals[i].pos_cls_num > temp)
+        {
+            temp = literals[i].pos_cls_num;
+            var = i;
+        }
+        if (literals[i].value == UNKNOWN && literals[i].neg_cls_num > temp)
+        {
+            temp = literals[i].neg_cls_num;
+            var = -i;
+        }
+    }
+    *val = var;
+    (*blevel)++;
+    literals[abs(*val)].value = abs(*val)/(*val);
+    literals[abs(*val)].blevel = *blevel;
+    literals[abs(*val)].assigned++;
+    ltr_known++;
 }
 
 /**

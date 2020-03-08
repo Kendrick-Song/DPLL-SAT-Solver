@@ -49,6 +49,8 @@ typedef struct literalList
     int blevel;      //赋值时的决策级
     int assigned;    //被赋值的次数
     int unit_clause; //标记是否存在该变元的单子句
+    int pos_cls_num;//正文字相关子句数量
+    int neg_cls_num;//负文字相关子句数量
     ClauseNode *pos; //正文字邻接表
     ClauseNode *neg; //负文字邻接表
 } LiteralList;
@@ -67,6 +69,7 @@ void init_cnf(LiteralList literals[]);
 status load_file(LiteralList literals[], char filename[]);
 //solver.c中函数声明
 void decide_next_branch(LiteralList literals[], int *val, int *blevel);
+void VSIDS(LiteralList literals[], int *val, int *blevel);
 status deduce(LiteralList literals[], ClauseNode *root, int blevel);
 status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel);
 int back_track(LiteralList literals[], int *blevel, int val);

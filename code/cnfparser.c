@@ -116,6 +116,8 @@ void init_cnf(LiteralList literals[])
         literals[i].assigned = 0;
         literals[i].blevel = 0;
         literals[i].unit_clause = 0;
+        literals[i].pos_cls_num = 0;
+        literals[i].neg_cls_num = 0;
         //文字相关信息初始化
 
         if (literals[i].pos != NULL)
@@ -162,10 +164,12 @@ void add_clause(LiteralList literals[], ClauseNode *ctemp, int val)
     if (val > 0)
     {
         cp = literals[val].pos;
+        literals[val].pos_cls_num++;
     }
     else
     {
         cp = literals[-val].neg;
+        literals[-val].neg_cls_num++;
     } //按正负文字分类该文字对应子句
 
     while (cp->next_clauseNode)
