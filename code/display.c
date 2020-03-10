@@ -145,8 +145,12 @@ void sat()
                 printf("Load File Successfully!\n");
             } //文件读取
 
+            int i = 0;
+            printf("\nPlease choose the branching strategy:\n");
+            printf("1 RAND    2 VSIDS\n");
+            scanf("%d", &i);
             begin = clock();
-            result = dpll(literals);
+            result = dpll(literals,i);
             end = clock();
             cost = (end - begin);
             //dpll求解并计时

@@ -10,14 +10,22 @@
  * 函数功能：dpll算法求解
  * 返回值：SATISFIABLE/UNSATISFIABLE
  */
-status dpll(LiteralList literals[])
+status dpll(LiteralList literals[], int op)
 {
     int status = 0, val = 0, blevel = 0;
     ClauseNode *cp = NULL;
     while (1)
     {
-        // decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
-        VSIDS(literals, &val, &blevel); //分支选择，返回选择为真的变元
+        switch (op)
+        {
+        case 1:
+            decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
+            break;
+        case 2:
+            VSIDS(literals, &val, &blevel); //分支选择，返回选择为真的变元
+        default:
+            break;
+        }
         while (TRUE)
         {
             if (val > 0)
@@ -95,12 +103,22 @@ void VSIDS(LiteralList literals[], int *val, int *blevel)
     int var = 0;
     for (int i = 1; i <= ltr_num; i++)
     {
-        if (literals[i].value == UNKNOWN && literals[i].pos_cls_num > temp)
+        if (literals[i].value == NONE)
+        {
+            literals[i].value = 1;
+            ltr_known++;
+            continue;
+        }
+        if (literals[i].value != UNKNOWN)
+        {
+            continue;
+        }
+        if (literals[i].pos_cls_num >= temp)
         {
             temp = literals[i].pos_cls_num;
             var = i;
         }
-        if (literals[i].value == UNKNOWN && literals[i].neg_cls_num > temp)
+        if (literals[i].neg_cls_num >= temp)
         {
             temp = literals[i].neg_cls_num;
             var = -i;
@@ -108,7 +126,7 @@ void VSIDS(LiteralList literals[], int *val, int *blevel)
     }
     *val = var;
     (*blevel)++;
-    literals[abs(*val)].value = abs(*val)/(*val);
+    literals[abs(*val)].value = abs(*val) / (*val);
     literals[abs(*val)].blevel = *blevel;
     literals[abs(*val)].assigned++;
     ltr_known++;

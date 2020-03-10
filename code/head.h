@@ -73,7 +73,7 @@ void VSIDS(LiteralList literals[], int *val, int *blevel);
 status deduce(LiteralList literals[], ClauseNode *root, int blevel);
 status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel);
 int back_track(LiteralList literals[], int *blevel, int val);
-status dpll(LiteralList literals[]);
+status dpll(LiteralList literals[],int op);
 //diplay.c中函数声明
 void show_answer(LiteralList literals[], clock_t cost, int result, char filename[]);
 void check_answer(LiteralList literals[]);
