@@ -18,21 +18,20 @@ status dpll(LiteralList literals[], int op)
     {
         switch (op)
         {
-        case 1:
-            decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
-            break;
-        case 2:
-            VSIDS(literals, &val, &blevel); //分支选择，返回选择为真的变元
-        default:
-            break;
+            case 1:
+                decide_next_branch(literals, &val, &blevel); //分支选择，返回选择为真的变元
+                break;
+            case 2:
+                VSIDS(literals, &val, &blevel); //分支选择，返回选择为真的变元
+            default:
+                break;
         }
         while (TRUE)
         {
             if (val > 0)
             {
                 cp = literals[val].neg->next_clauseNode;
-            }
-            else
+            } else
             {
                 cp = literals[-val].pos->next_clauseNode;
             } //正文字为真，指向负文字子句链，反之亦然
@@ -42,16 +41,14 @@ status dpll(LiteralList literals[], int op)
             if (status == SATISFIABLE)
             {
                 return SATISFIABLE;
-            }
-            else if (status == CONFLICT)
+            } else if (status == CONFLICT)
             {
                 val = back_track(literals, &blevel, val); //回溯,返回需要更改决策的变元
 
                 if (blevel == 0)
                 {
                     return UNSATISFIABLE;
-                }
-                else
+                } else
                 {
                     literals[val].value *= -1;
                     literals[val].assigned++;
@@ -60,8 +57,7 @@ status dpll(LiteralList literals[], int op)
                         val *= -1;
                     }
                 }
-            }
-            else if (status == OTHERS)
+            } else if (status == OTHERS)
             {
                 break;
             }
@@ -103,16 +99,27 @@ void VSIDS(LiteralList literals[], int *val, int *blevel)
     int var = 0;
     for (int i = 1; i <= ltr_num; i++)
     {
-        if (literals[i].value == NONE)
+        if (*blevel == 0)
         {
-            literals[i].value = 1;
-            ltr_known++;
-            continue;
-        }
+            if (literals[i].pos_cls_num == 0 || literals[i].neg_cls_num == 0)
+            {
+                if (literals[i].neg_cls_num == 0)
+                {
+                    literals[i].value = 1;//负文字对应子句数为0，则该文字必为负
+                } else
+                {
+                    literals[i].value = -1;//正文字对应子句数为0，则该文字必为正
+                }
+                ltr_known++;
+                continue;
+            }
+        }//简单的预处理
+
         if (literals[i].value != UNKNOWN)
         {
-            continue;
+            continue;//该文字值已知，跳过本次循环
         }
+
         if (literals[i].pos_cls_num >= temp)
         {
             temp = literals[i].pos_cls_num;
@@ -124,6 +131,7 @@ void VSIDS(LiteralList literals[], int *val, int *blevel)
             var = -i;
         }
     }
+
     *val = var;
     (*blevel)++;
     literals[abs(*val)].value = abs(*val) / (*val);
@@ -180,8 +188,7 @@ status deduce(LiteralList literals[], ClauseNode *root, int blevel)
     if (ltr_known < ltr_num)
     {
         return OTHERS;
-    }
-    else
+    } else
     {
         return SATISFIABLE;
     }
@@ -233,8 +240,7 @@ status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel)
         if (first_unknown > 0)
         {
             *cp = literals[first_unknown].neg->next_clauseNode;
-        }
-        else
+        } else
         {
             *cp = literals[-first_unknown].pos->next_clauseNode;
         } //返回推理出的变元所影响的子句链
@@ -292,15 +298,12 @@ int back_track(LiteralList literals[], int *blevel, int val)
                         break;
                     }
                 }
-            }
-            else
+            } else
                 break;
-        }
-        else if (literals[parent].assigned == 2)
+        } else if (literals[parent].assigned == 2)
         {
             (*blevel)--;
-        }
-        else
+        } else
         {
             break;
         }
