@@ -15,7 +15,7 @@ int main()
         printf("%20cSAT<\n", '>');
         printf("%10c***********************\n", ' ');
         printf("%16c1.  SAT\n", ' ');
-        printf("%16c2.  Sudoku\n", ' ');
+        printf("%16c2.  Puzzle\n", ' ');
         printf("%16c0.  Exit\n", ' ');
         printf("%10c***********************\n", ' ');
         scanf("%d", &op);
@@ -24,10 +24,14 @@ int main()
         case 1:
             sat();
             break;
+        case 2:
+            puzzle();
+            break;
         case 0:
-            return 0;
+            break;
         default:
             break;
         }
     }
+    return 0;
 }

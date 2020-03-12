@@ -8,23 +8,24 @@
 /**
  * 函数名称：show_answer
  * 函数功能：输出结果到终端并写入同名文件
- * 返回值：无
+ * 返回值：void
  */
 void show_answer(LiteralList literals[], clock_t cost, int result, char filename[])
 {
     FILE *fp = NULL;
 
     char *suffix = strrchr(filename, '.'); //找到'.'最后一次出现的位置
+    //文件名后缀更改
     suffix[1] = 'r';
     suffix[2] = 'e';
     suffix[3] = 's';
-    //文件名后缀更改
 
+    //写入,输出求解结果
     fp = fopen(filename, "w");
     fprintf(fp, "s%6d\n", result);
     printf("s%6d\n", result);
-    //写入/输出求解结果
 
+    //写入,输出具体解
     fprintf(fp, "v");
     printf("v");
     if (result == TRUE)
@@ -33,17 +34,19 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
         {
             fprintf(fp, "%6d", literals[i].value * i);
             printf("%6d", literals[i].value * i);
+
             if (i % 10 == 0 && i != ltr_num)
             {
+                //每10个换行
                 fprintf(fp, "\n ");
                 printf("\n ");
-            } //每10个换行
+            }
         }
-    } //写入/输出解
+    }
 
+    //写入,输出求解时间
     fprintf(fp, "\nt%6ld", cost);
     printf("\nt%6ld ms\n", cost);
-    //写入/输出求解时间
 
     fclose(fp);
     return;
@@ -56,6 +59,7 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
  */
 void check_answer(LiteralList literals[])
 {
+    //判断是否有答案以供检查
     if (literals[1].value == UNKNOWN)
     {
         printf("There's no Answer to check!\n");
@@ -68,20 +72,26 @@ void check_answer(LiteralList literals[])
     VarNode *vp = NULL;
     int status = 0; //子句状态
 
+    //检查结果写入文件
     fp = fopen(filename, "w");
     while (cp != NULL)
     {
         vp = cp->vn;
+
+        //子句文字扫描
         while (vp != NULL)
         {
             fprintf(fp, "%4d", vp->var);
+
             if (literals[abs(vp->var)].value * vp->var > 0)
             {
+                //有变元为真，则该子句为真
                 status = TRUE;
-            } //有变元为真，则该子句为真
+            }
             vp = vp->next_varNode;
-        } //子句文字扫描
+        }
 
+        //输出该子句真假值
         if (status == TRUE)
         {
             fprintf(fp, "\tT\n");
@@ -93,9 +103,9 @@ void check_answer(LiteralList literals[])
 
         cp = cp->next_clauseNode; //扫描下一子句
     }
-    //检查结果写入文件
 
     fprintf(fp, "\n");
+    fclose(fp);
 
     if (status == TRUE)
     {
@@ -109,6 +119,11 @@ void check_answer(LiteralList literals[])
     printf("The check report has been generated!\n");
 }
 
+/**
+ * 函数名称：sat
+ * 函数功能：sat操作界面
+ * 返回值：void
+ */
 void sat()
 {
     LiteralList literals[Max_Ltr_Num];
@@ -131,6 +146,7 @@ void sat()
         switch (op)
         {
         case 1:
+            //文件读取
             printf("Please input the file path:\n");
             scanf("%s", filename);
             if (load_file(literals, filename) == FALSE)
@@ -143,29 +159,69 @@ void sat()
             else
             {
                 printf("Load File Successfully!\n");
-            } //文件读取
+            }
 
+            //dpll求解并计时
             int i = 0;
             printf("\nPlease choose the branching strategy:\n");
             printf("1 RAND    2 VSIDS\n");
             scanf("%d", &i);
             begin = clock();
-            result = dpll(literals,i);
+            result = dpll(literals, i);
             end = clock();
             cost = (end - begin);
-            //dpll求解并计时
 
-            show_answer(literals, cost, result, filename); //输出答案到终端和文件
+            //输出答案到终端和文件
+            show_answer(literals, cost, result, filename);
+
             getchar();
             getchar();
             break;
         case 2:
+            //检查正误
             check_answer(literals);
+
             getchar();
             getchar();
             break;
         case 0:
             return;
+        default:
+            break;
+        }
+    }
+}
+
+/**
+ * 函数名称：puzzle
+ * 函数功能：数独操作界面
+ * 返回值：void
+ */
+void puzzle()
+{
+    LiteralList literals[Max_Ltr_Num];
+    int op = 1;
+    while (op)
+    {
+        system("cls");
+        printf("\n\n");
+        printf("%20cSAT<\n", '>');
+        printf("%10c***********************\n", ' ');
+        printf("%13c1.  New Puzzle\n", ' ');
+        printf("%13c2.  Show Answer\n", ' ');
+        printf("%13c0.  Back\n", ' ');
+        printf("%10c***********************\n", ' ');
+        scanf("%d", &op);
+        switch (op)
+        {
+        case 1:
+            getchar();
+            getchar();
+            break;
+        case 2:
+            getchar();
+            getchar();
+            break;
         default:
             break;
         }
