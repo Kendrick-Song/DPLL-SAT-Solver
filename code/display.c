@@ -199,7 +199,9 @@ void sat()
  */
 void puzzle()
 {
-    LiteralList literals[Max_Ltr_Num];
+    LiteralList *literals = (LiteralList *)calloc(30000, sizeof(LiteralList));
+    FILE *fp = NULL;
+
     int op = 1;
     while (op)
     {
@@ -215,6 +217,8 @@ void puzzle()
         switch (op)
         {
         case 1:
+            rules_generate(fp);
+            printf("Rules have been generated successfully!\n");
             getchar();
             getchar();
             break;

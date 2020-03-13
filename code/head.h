@@ -49,8 +49,8 @@ typedef struct literalList
     int blevel;      //赋值时的决策级
     int assigned;    //被赋值的次数
     int unit_clause; //标记该文字是否是被推导出来的
-    int pos_cls_num;//正文字相关子句数量
-    int neg_cls_num;//负文字相关子句数量
+    int pos_cls_num; //正文字相关子句数量
+    int neg_cls_num; //负文字相关子句数量
     ClauseNode *pos; //正文字邻接表
     ClauseNode *neg; //负文字邻接表
 } LiteralList;
@@ -74,12 +74,18 @@ void VSIDS_decide(LiteralList literals[], int *val, int *blevel);
 status deduce(LiteralList literals[], ClauseNode *root, int blevel);
 status unit_clause_deduce(LiteralList literals[], ClauseNode **cp, int blevel);
 int back_track(LiteralList literals[], int *blevel, int val);
-status dpll(LiteralList literals[],int op);
+status dpll(LiteralList literals[], int op);
 
 //diplay.c中函数声明
 void show_answer(LiteralList literals[], clock_t cost, int result, char filename[]);
 void check_answer(LiteralList literals[]);
 void sat();
 void puzzle();
+
+//binary_puzzle.c中函数声明
+void rules_generate(FILE *fp);
+void rule_1(FILE *fp);
+void rule_2(FILE *fp);
+void rule_3(FILE *fp);
 
 #endif

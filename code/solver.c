@@ -121,11 +121,17 @@ void VSIDS_decide(LiteralList literals[], int *val, int *blevel)
     //找到子句最多的变元
     for (int i = 1; i <= ltr_num; i++)
     {
-        //简单的预处理，将只有正子句或负子句存在的文字赋值
+        //简单的预处理
         if (*blevel == 0)
         {
-            if (literals[i].pos_cls_num == 0 || literals[i].neg_cls_num == 0)
+            if (literals[i].value == NONE)
             {
+                //范围内变元不存在，已知变元数加一，防止求解死循环
+                ltr_known++;
+            }
+            else if (literals[i].pos_cls_num == 0 || literals[i].neg_cls_num == 0)
+            {
+                //将只有正子句或负子句存在的文字赋值
                 if (literals[i].neg_cls_num == 0)
                 {
                     //负文字对应子句数为0，则该文字值必为正
@@ -137,8 +143,8 @@ void VSIDS_decide(LiteralList literals[], int *val, int *blevel)
                     literals[i].value = -1;
                 }
                 ltr_known++;
-                continue;
             }
+            continue;
         }
 
         if (literals[i].value != UNKNOWN)
@@ -363,4 +369,3 @@ int back_track(LiteralList literals[], int *blevel, int val)
     //返回要回退到的决策级对应的决策变量
     return parent;
 }
-
