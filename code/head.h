@@ -87,5 +87,6 @@ void rules_generate(FILE *fp);
 void rule_1(FILE *fp);
 void rule_2(FILE *fp);
 void rule_3(FILE *fp);
+void show_puzzle(LiteralList literalList[]);
 
 #endif

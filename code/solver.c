@@ -128,6 +128,7 @@ void VSIDS_decide(LiteralList literals[], int *val, int *blevel)
             {
                 //范围内变元不存在，已知变元数加一，防止求解死循环
                 ltr_known++;
+                continue;
             }
             else if (literals[i].pos_cls_num == 0 || literals[i].neg_cls_num == 0)
             {
@@ -143,8 +144,8 @@ void VSIDS_decide(LiteralList literals[], int *val, int *blevel)
                     literals[i].value = -1;
                 }
                 ltr_known++;
+                continue;
             }
-            continue;
         }
 
         if (literals[i].value != UNKNOWN)

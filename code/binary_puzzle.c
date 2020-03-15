@@ -12,7 +12,7 @@
  */
 void rules_generate(FILE *fp)
 {
-    char filename[] = "rules.cnf";
+    char filename[] = "puzzle.cnf";
     fp = fopen(filename, "w");
     fprintf(fp, "p cnf 30000 30000\n");
 
@@ -184,9 +184,9 @@ void rule_3(FILE *fp)
             {
                 pos_addition[column] = 10000 + std_line * 1000 + cmp_line * 100 + column * 10 + 1; //13511
                 neg_addition[column] = 10000 + std_line * 1000 + cmp_line * 100 + column * 10;     //13510
-                addition[column] = 1000 + std_line * 100 + cmp_line * 10 + column;                  //1351
-                var1 = std_line * 10 + column;                                                      //31
-                var2 = cmp_line * 10 + column;                                                      //51
+                addition[column] = 1000 + std_line * 100 + cmp_line * 10 + column;                 //1351
+                var1 = std_line * 10 + column;                                                     //31
+                var2 = cmp_line * 10 + column;                                                     //51
 
                 //13511= 31∧51转化为CNF生成3个子句：31∨¬13511；51∨¬13511；¬31∨¬51∨13511
                 fprintf(fp, "%d %d 0\n", var1, -pos_addition[column]);
@@ -230,9 +230,9 @@ void rule_3(FILE *fp)
             {
                 pos_addition[line] = 20000 + std_col * 1000 + cmp_col * 100 + line * 10 + 1; //23511
                 neg_addition[line] = 20000 + std_col * 1000 + cmp_col * 100 + line * 10;     //23510
-                addition[line] = 2000 + std_col * 100 + cmp_col * 10 + line;                  //2351
-                var1 = std_col + line * 10;                                                   //13
-                var2 = cmp_col + line * 10;                                                   //15
+                addition[line] = 2000 + std_col * 100 + cmp_col * 10 + line;                 //2351
+                var1 = std_col + line * 10;                                                  //13
+                var2 = cmp_col + line * 10;                                                  //15
 
                 //23511= 13∧15转化为CNF生成3个子句：13∨¬23511；15∨¬13511；¬13∨¬15∨23511
                 fprintf(fp, "%d %d 0\n", var1, -pos_addition[line]);
@@ -263,5 +263,36 @@ void rule_3(FILE *fp)
                 fprintf(fp, "%d %d 0\n", var3, addition[i]);
             }
         }
+    }
+}
+
+/**
+ * 函数名称：show_puzzle
+ * 函数功能：打印数独
+ * 返回值：void
+ */
+void show_puzzle(LiteralList literalList[])
+{
+    int x = 0;
+    for (int i = 1; i <= 6; i++)
+    {
+        for (int j = 1; j <= 6; j++)
+        {
+            x = 10 * i + j;
+            if (literalList[x].value == UNKNOWN)
+            {
+                printf("%4c", '_');
+            }
+            else if(literalList[x].value>0)
+            {
+                printf("%4d", literalList[x].value);
+            }
+            else
+            {
+                printf("%4d",0);
+            }
+            
+        }
+        printf("\n");
     }
 }

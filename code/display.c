@@ -199,7 +199,7 @@ void sat()
  */
 void puzzle()
 {
-    LiteralList *literals = (LiteralList *)calloc(30000, sizeof(LiteralList));
+    LiteralList *literals = (LiteralList *)calloc(30001, sizeof(LiteralList));
     FILE *fp = NULL;
 
     int op = 1;
@@ -217,12 +217,17 @@ void puzzle()
         switch (op)
         {
         case 1:
-            rules_generate(fp);
-            printf("Rules have been generated successfully!\n");
             getchar();
             getchar();
             break;
         case 2:
+            rules_generate(fp);
+            printf("Rules have been generated successfully!\n");
+            load_file(literals, "puzzle.cnf");
+            printf("Load File Successfully!!\n");
+            show_puzzle(literals);
+            dpll(literals, 2);
+            show_puzzle(literals);
             getchar();
             getchar();
             break;
