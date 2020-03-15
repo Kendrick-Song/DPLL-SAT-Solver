@@ -217,17 +217,24 @@ void puzzle()
         switch (op)
         {
         case 1:
+            //规则文件生成
+            rules_generate(fp);
+            printf("Rules have been generated successfully!\n");
+
+            //规则文件读入内存
+            load_file(literals, "puzzle.cnf");
+            printf("Load File Successfully!!\n");
+
             getchar();
             getchar();
             break;
         case 2:
-            rules_generate(fp);
-            printf("Rules have been generated successfully!\n");
-            load_file(literals, "puzzle.cnf");
-            printf("Load File Successfully!!\n");
-            show_puzzle(literals);
-            dpll(literals, 2);
-            show_puzzle(literals);
+
+            show_puzzle(literals); //打印未解答棋盘
+
+            dpll(literals, 2); //求解
+
+            show_puzzle(literals); //打印解答棋盘
             getchar();
             getchar();
             break;
