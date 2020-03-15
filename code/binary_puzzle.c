@@ -252,7 +252,7 @@ void rule_3(FILE *fp)
 
             //235= ¬[2351∧2352∧…∧2356]转化为CNF生成7个子句：（¬235∨¬2351∨¬2352∨…∨¬2356）∧（2351∨235）∧（2352∨235）…（2356∨235）
             int var3 = 200 + std_col * 10 + cmp_col; //235
-            fprintf(fp, "%d 0\n", var3);             //235不能为假
+            // fprintf(fp, "%d 0\n", var3);             //235不能为假
 
             //（¬235∨¬2351∨¬2352∨…∨¬2356）
             fprintf(fp, "%d %d %d %d %d %d %d 0\n", -var3, -addition[1], -addition[2], -addition[3], -addition[4], -addition[5], -addition[6]);
@@ -274,24 +274,29 @@ void rule_3(FILE *fp)
 void show_puzzle(LiteralList literalList[])
 {
     int x = 0;
+
+    //行打印
     for (int i = 1; i <= 6; i++)
     {
+        //列打印
         for (int j = 1; j <= 6; j++)
         {
             x = 10 * i + j;
             if (literalList[x].value == UNKNOWN)
             {
+                //文字值未知，打印' _ '
                 printf("%4c", '_');
             }
-            else if(literalList[x].value>0)
+            else if (literalList[x].value > 0)
             {
+                //文字值为正，打印' 1 '
                 printf("%4d", literalList[x].value);
             }
             else
             {
-                printf("%4d",0);
+                //文字值为负，打印' 0 '
+                printf("%4d", 0);
             }
-            
         }
         printf("\n");
     }
