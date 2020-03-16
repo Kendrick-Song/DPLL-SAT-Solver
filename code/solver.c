@@ -105,7 +105,6 @@ void rand_decide(LiteralList literals[], int *val, int *blevel)
             return;
         }
     }
-    return;
 }
 
 /**

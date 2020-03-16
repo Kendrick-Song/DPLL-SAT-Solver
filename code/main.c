@@ -2,7 +2,7 @@
  * 文件名称：main.c
  * 文件描述：主界面的显示，函数调用
  */
-
+ 
 #include "head.h"
 
 int main()

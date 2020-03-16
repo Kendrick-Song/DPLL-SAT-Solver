@@ -1,5 +1,5 @@
 /**
- * 文件名称：binary_puzzle
+ * 文件名称：binary_puzzle.c
  * 文件描述：二进制数独模块,包括游戏格局生成、归约、求解
  */
 
@@ -21,7 +21,6 @@ void rules_generate(FILE *fp)
     rule_3(fp);
 
     fclose(fp);
-    return;
 }
 
 /**
@@ -207,7 +206,6 @@ void rule_3(FILE *fp)
             //135= ¬[1351∧1352∧…∧1356]转化为CNF生成7个子句：（¬135∨¬1351∨¬1352∨…∨¬1356）∧（1351∨135）∧（1352∨135）…（1356∨135）
 
             int var3 = 100 + std_line * 10 + cmp_line; //135
-            fprintf(fp, "%d 0\n", var3);               //135不能为假
 
             //（¬135∨¬1351∨¬1352∨…∨¬1356）
             fprintf(fp, "%d %d %d %d %d %d %d 0\n", -var3, -addition[1], -addition[2], -addition[3], -addition[4], -addition[5], -addition[6]);
@@ -271,7 +269,7 @@ void rule_3(FILE *fp)
  * 函数功能：打印数独
  * 返回值：void
  */
-void show_puzzle(LiteralList literalList[])
+void show_puzzle(LiteralList literals[])
 {
     int x = 0;
 
@@ -282,15 +280,15 @@ void show_puzzle(LiteralList literalList[])
         for (int j = 1; j <= 6; j++)
         {
             x = 10 * i + j;
-            if (literalList[x].value == UNKNOWN)
+            if (literals[x].value == UNKNOWN)
             {
                 //文字值未知，打印' _ '
                 printf("%4c", '_');
             }
-            else if (literalList[x].value > 0)
+            else if (literals[x].value > 0)
             {
                 //文字值为正，打印' 1 '
-                printf("%4d", literalList[x].value);
+                printf("%4d", literals[x].value);
             }
             else
             {
@@ -300,4 +298,70 @@ void show_puzzle(LiteralList literalList[])
         }
         printf("\n");
     }
+}
+
+/**
+ * 函数名称：choose_puzzle
+ * 函数功能：选择数独题目
+ * 返回值：void
+ */
+void choose_puzzle(LiteralList literals[])
+{
+    char *dif = NULL;
+    char string[10];
+    int choise;
+    int op;
+
+    //选择难度
+    printf("\nPlease choose the difficulty!\n");
+    printf("1.easy    2.medium    3.hard\n");
+    scanf("%d", &op);
+    switch (op)
+    {
+    case 1:
+        dif = "easy";
+        break;
+    case 2:
+        dif = "medium";
+        break;
+    case 3:
+        dif = "hard";
+        break;
+    }
+
+    //选择题号
+    printf("\nPlease choose the puzzle(1-10):\n");
+    scanf("%d", &choise);
+
+    FILE *fp;
+    fp = fopen("puzzle pool.txt", "r");
+
+    //找到题目
+    while (1)
+    {
+        fscanf(fp, "%s", string);
+        if (strcmp(string, dif) == 0) //读到对应难度退出循环
+            break;
+    }
+    while (1)
+    {
+        fscanf(fp, "%d", &op);
+        if (op == choise) //读到对应题号退出循环
+            break;
+    }
+
+    //题目写入内存
+    int var = 0;
+    while (TRUE)
+    {
+        fscanf(fp, "%d", &var);
+        if (var == 0)
+        {
+            break;
+        }
+        literals[abs(var)].value = var / abs(var);
+        ltr_known++;
+    }
+
+    fclose(fp);
 }

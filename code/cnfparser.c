@@ -118,7 +118,7 @@ status load_file(LiteralList literals[], char filename[])
 /**
  * 函数名称：InitCnf
  * 函数功能：初始化cnf相关结构
- * 返回值：TRUE
+ * 返回值：void
  */
 void init_cnf(LiteralList literals[])
 {
@@ -201,6 +201,4 @@ void add_clause(LiteralList literals[], ClauseNode *ctemp, int val)
     //新结点赋值
     cp->vn = ctemp->vn;
     cp->next_clauseNode = NULL;
-
-    return;
 }

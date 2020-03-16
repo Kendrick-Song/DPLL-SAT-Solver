@@ -1,6 +1,6 @@
 /**
  * 文件名称：display.c
- * 文件描述：SAT界面的显示，函数调用
+ * 文件描述：界面的显示，函数调用
  */
 
 #include "head.h"
@@ -49,7 +49,6 @@ void show_answer(LiteralList literals[], clock_t cost, int result, char filename
     printf("\nt%6ld ms\n", cost);
 
     fclose(fp);
-    return;
 }
 
 /**
@@ -76,6 +75,7 @@ void check_answer(LiteralList literals[])
     fp = fopen(filename, "w");
     while (cp != NULL)
     {
+        status = 0;
         vp = cp->vn;
 
         //子句文字扫描
@@ -106,15 +106,6 @@ void check_answer(LiteralList literals[])
 
     fprintf(fp, "\n");
     fclose(fp);
-
-    if (status == TRUE)
-    {
-        printf("The result is TRUE!\n");
-    }
-    else
-    {
-        printf("The result is FALSE!\n");
-    }
 
     printf("The check report has been generated!\n");
 }
@@ -152,6 +143,7 @@ void sat()
             if (load_file(literals, filename) == FALSE)
             {
                 printf("Failed to Load File !\n");
+
                 getchar();
                 getchar();
                 break;
@@ -225,19 +217,33 @@ void puzzle()
             load_file(literals, "puzzle.cnf");
             printf("Load File Successfully!!\n");
 
+            choose_puzzle(literals); //选择题目
+            show_puzzle(literals);   //打印未解答棋盘
+
             getchar();
             getchar();
             break;
         case 2:
+            //打印未解答棋盘
+            printf("The puzzle is :\n");
+            show_puzzle(literals);
+            printf("\n");
 
-            show_puzzle(literals); //打印未解答棋盘
+            //当前棋盘未求解
+            if (ltr_known != ltr_num)
+            {
+                dpll(literals, 2); //求解
 
-            dpll(literals, 2); //求解
+                //打印解答棋盘
+                printf("The answer is :\n");
+                show_puzzle(literals);
+            }
 
-            show_puzzle(literals); //打印解答棋盘
             getchar();
             getchar();
             break;
+        case 0:
+            return;
         default:
             break;
         }
