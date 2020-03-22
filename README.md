@@ -29,7 +29,7 @@ Program synthesis design practice
 * neg：负文字相关子句指针
 
 数据结构示意图：
-![数据结构示意图](结构示意图.png)
+![数据结构示意图](./img/结构示意图.png)
 数据结构具体定义：
 ```c
 /*数据结构定义*/
